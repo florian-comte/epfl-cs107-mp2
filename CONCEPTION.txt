@@ -1,0 +1,175 @@
+Our project is bigger than 2.5MB so our ressources are on the drive.
+
+
+
+                                                                SOURCES
+Sources of images :
+https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pinterest.com%2Fpin%2F728949889678189722%2F&psig=AOvVaw3oaOjHxzD5cEfaepQvjZ1w&ust=1640321546726000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCKjbqouQ-fQCFQAAAAAdAAAAABAD
+https://www.vectorstock.com/royalty-free-vector/versus-compare-red-vs-blue-battle-conflict-frame-vector-23111140
+https://poki.com/en/g/clash-of-tanks
+
+All sprites from https://www.spriters-resource.com/
+
+Sources of sounds :
+https://www.youtube.com/watch?v=3ExGuHWdXCE
+https://www.youtube.com/watch?v=su6_bKJJk74
+https://www.youtube.com/watch?v=JURtuwD9TsU
+https://www.youtube.com/watch?v=bhJaMfD6ifs
+https://www.youtube.com/watch?v=1ky1-A0Rk9c
+https://mixkit.co/free-sound-effects/game-over/
+https://www.youtube.com/watch?v=w2vm1lcQMxk
+
+
+
+                                                        MODIFICATIONS OF THE MODEL
+- In the Text.java, we added:
+/**
+* Update the color displayed
+* @param color (Color) the new color, may be null
+*/
+public void setColor(Color color){
+    textGraphics.setFillColor(color);
+}
+
+We need to set the color of the next in the pause menu. (ON/OFF for the music and the sounds)
+
+- We increase the size of the window for more comfort and to fully appreciate our game.
+
+
+
+                                                        MODIFICATIONS OF CONCEPTION
+
+- We named the Unit class by ICWarsUnit because it makes more sense compared to ICWarsPlayer
+- We do not use nextWaitingPlayers list because we do not need them. We are just checking if there are no more player in the 
+currentWaitingList and if its the case we remove dead players and putAll players not dead (list players in ICWars) and put them in the currentWaitingList)
+- We modify the behaviours because we modify the maps
+- The tanks and RPGs can only fired at same x or same y (not diagonal) because it more easy for animations (same for the cats)
+- The soldats can attack in their range as wanted in the project.
+- The tanks and RPG rockets hit the first unit they interact (friendlyFire activate) and not the selectedUnit (for more realism)
+- If you play in mode Player VS Player or Player VS AI, before playing, you have to place your units on the map.
+- All AI spawn randomly on the map
+- At the second level, we switch the player who start for more equality
+- Modification of the game machine: MAIN_MENU, BET_TEAM, CHOOSE_THEME, INIT, SETUP_UNIT, CHOOSE_PLAYER, START_PLAYER_TURN, PLAYER_TURN,
+END_PLAYER_TURN, END_TURN, HELIKOPTER, END, GAME_OVER, RESULTS, PAUSE;
+
+    - MAIN_MENU: Menu where the user can choose between the 3 modes
+    - BET_TEAM: Menu where the user can bet on a team (not always used)
+    - CHOOSE_THEME: Menu where the user can choose between the cats and the military
+    - SETUP_UNIT: Step when the player can place their units on the map
+    - HELIKOPTER: A team is celebrating his victory by dancing !
+    - GAME_OVER: Menu of game over
+    - RESULTS: Menu with the results of the game and the bet(not necessarily)
+    - PAUSE: Menu where the game is stop and the player can stop or play music and sounds.
+
+
+
+                                                        PACKAGES ORGANISATION
+
+For the actors, we decided to separate in 3 parts, the players, the units and the others (we find there methods added by us):
+
+actors
+    - others
+        Missile 
+        Boom
+        City
+        Helikopter
+    - players
+        ICWarsPlayer
+        AIPlayer
+        RealPlayer
+    - units
+        ICWarsUnit
+        ICWarsAnimatedUnit
+    ICWarsActor
+
+For the areas, we decided to separate in 2 parts, the levels and the "menus" (we find there methods added by us):
+There are the more abstract methods, the behaviour and the range not int a sub-package of area.
+
+area
+    - levels
+        Level0
+        Level1
+    - other
+        BetTeam
+        ChooseTheme
+        GameOver
+        MainMenu
+        Pause
+        Results
+    ICWarsArea
+    ICWarsBehaviour
+    ICWarsRange
+    MenuArea
+
+We have in the package GUI all the methods use for the user display:
+
+gui
+    ICWarsPlayerGUI
+    ICWarsInfoPanel
+    ICWarsActionsPanel
+
+We have in the package utils, one enum for faction and the sounds manager:
+
+utils
+    Faction
+    SoundsManager
+
+We have the handler of interaction in a package.
+And finally the ICWars class not in a subpackage of icwars
+
+
+
+                                                            CLASSES ADDED
+UTILS CLASSES ADDED:
+- SoundsManager
+We rebuild a complete SoundsManager which is (we find ;-)) more easy that the model approach
+
+- Faction
+It's the enum of the factions which is used anywhere
+
+AREAS CLASSES ADDED:
+- We create some "Menu", one for choosing for which AI you want to bet (BetTeam), one for choosing your theme map (ChooseTheme), 
+one for the game over (GameOver), one for the main menu (MainMenu), on for the pause menu (PauseMenu), one for the results menu (Results).
+
+They are all extending the abstract class (MenuArea) which extends Area and implementing Graphics;
+
+UNITS CLASSES ADDED:
+We create a (ICWarsAnimatedUnits) for all animated units. We can also animate the attack and the move of our units. All the cats, 
+the Tank and the RGB are animated. They extends ICWarsUnit, we just added some stuff for the animation in.
+
+- We create a theme "Cats", so we had tree new types of cats :
+    (NormalCat) which is a normal cat
+    (Ours) which is a bear 
+    (TankCat) which is a cat thats look like a tank (or not)
+
+They are all extending the (Cat) abstract class (because when a cat is hit, he play a "miaw" sound).
+
+- We added a (RPG) military unit which can launch rocket (WOW !) 
+
+OTHER CLASSES ADDED:
+We added a (Capture) action. We can also capture cities in the Level 2. It extends Action.
+
+We added also some cool stuff ;-)
+- Your units can capture (City). This class extends ICWarsActor because it need a faction. 
+- (Missile) which extends MoveableAreaEntity are added because certain units can launch rockets ! 
+- We also need a (Boom) which extends AreaEntity for the explosion when our missile interact with an unit.
+- You will can randomly see (Meteorite) passed on your screen. Fortunately, they are just decorative things and can't hit your units.
+- And at the end of all turn, you will can admire a beautiful (Helikopter) in the military theme and his music (no spoil, btw you can skip it by pressing ENTER !).
+
+
+
+                                                                EXTENSIONS
+- We added an entire sound system with a music, multiple sounds (explosion, miaw, gameover, ...).
+- We added a pause menu, you can also switch ON/OFF the music and the sounds.
+- All the units are following their paths and not just teleport on their next position.
+- We added a system of cities, your units can capture the city and at the end of the turn, all your units on their own cities we get 1 more hp.
+- Certain units are animated (attack and move)
+- We have 3 modes, Player VS Player, Player VS AI, AI VS AI (Bet mode). In the last mode, you can bet on which AI you want.
+- We added one "theme". You will also can admire our beautifuls cats animated.
+- We implemented many menus for choosing your mode, your theme or the team you want to be.
+- Randomly, you can see meteorite passed on your screen.
+- We added rocket and explosions animations.
+- At the end of the turn, you could see the winners dancing on the dance of the helicopter !
+- New map with new behavior
+- We implement a system of points
+- We have a game over and you can show the result of the game and if you have win or not your bet.
